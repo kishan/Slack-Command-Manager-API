@@ -1,11 +1,10 @@
 # Slack-Command-Manager-API
 
-This API allows you to easily set up custom commands on Slack. Right now API includes one custom command: /tableflip
+This API allows you to easily set up custom commands on Slack. 
 
-
-Basic poll application based on the django tutorial consisting of two parts:
-* A public site that lets people view polls and vote in them.
-* An admin site that lets you add, change, and delete polls.
+Right now API includes the follow custom commands: 
+* /tableflip
+![alt text](screenshots/tableflip.png "Description goes here")
 
 
 ## Installation
