@@ -50,6 +50,23 @@ def tableflip(request):
 		return JsonResponse(final)
 
 
+	def sendPostMessage(text, response_type="in_channel"):
+		postMessage_url = "https://slack.com/api/chat.postMessage"
+		postMessage_params = {
+			"response_type": "in_channel",
+			"token": request.POST["token"], 
+			"text": "Partly cloudy today and tomorrow",
+			"channel": request.POST["channel_id"],
+			"as_user": True,
+		}
+		text_response = requests.post(postMessage_url, params=postMessage_params)
+		# text_response = requests.post("https://slack.com/api/chat.postMessage", params=postMessage_params)
+
+		# return text_response.json()["ts"]  # return message timestamp
+		# return text_response.json()
+		return text_response.json()
+
+
 	def flip(s):
 		pchars = u"abcdefghijklmnopqrstuvwxyz,.?!'()[]{}"
 		fchars = u"ɐqɔpǝɟƃɥıɾʞlɯuodbɹsʇnʌʍxʎz'˙¿¡,)(][}{"
@@ -59,6 +76,7 @@ def tableflip(request):
 		return "".join(charList)
 	
 	def table_flipper(text):
+		text = text.lower()
 		final_text = ""
 		if text == "":
 			final_text = u'(╯°□°）╯︵ ┻━┻'
@@ -69,11 +87,25 @@ def tableflip(request):
 			final_text = u'┬─┬ノ( º _ ºノ)'
 
 		if text == "mayank":
-			final_text = 'Mayank isn\'t even worth the effort of flipping over!!!'
+			final_text = 'Myank will always loose at ping-pong'
+
+		if text == "all":
+			final_text = "FLIP ALL DEM TABLEZ: \ns" + u'┻━┻︵ \(°□°)/ ︵ ┻━┻'
 		return final_text
 
 	data = request.POST["text"]
 	text_to_send = table_flipper(data)
 	return sendQuickMessage(text_to_send)
 
+	class ChannelDoesNotExist(Exception):
+		def __init__(self, *args, **kwargs):
+			Exception.__init__(self, *args, **kwargs)
+
+	try:
+		timestamp = sendPostMessage(text_to_send)
+		print timestamp
+	except ChannelDoesNotExist:
+		print "FAILED################################################################################################"
+		return HttpResponse("We cannot add reactions to the channel you posted to. You will have to add your own. Sorry!. :(")
 	
+	return HttpResponse() # Empty 200 HTTP response, to not display any additional content in Slack
